@@ -1,12 +1,14 @@
 package com.example.fragmentcolorchange
 
+import android.content.Context
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,19 +22,18 @@ class ColorListFragment : Fragment() {
 
     lateinit var viewModel: MainViewModel
 
-
-    // Интерфейс для клика
+        // Интерфейс для клика
     interface OnItemClickListener {
         fun onItemClicked(position: Int, view: View)
     }
     fun RecyclerView.addOnItemClickListener(onClickListener: OnItemClickListener) {
-        this.addOnChildAttachStateChangeListener(object: RecyclerView.OnChildAttachStateChangeListener {
+        this.addOnChildAttachStateChangeListener(object :
+            RecyclerView.OnChildAttachStateChangeListener {
             override fun onChildViewDetachedFromWindow(view: View) {
-                view?.setOnClickListener(null)
+                view.setOnClickListener(null)
             }
-
             override fun onChildViewAttachedToWindow(view: View) {
-                view?.setOnClickListener {
+                view.setOnClickListener {
                     val holder = getChildViewHolder(view)
                     onClickListener.onItemClicked(holder.adapterPosition, view)
                 }
@@ -50,12 +51,24 @@ class ColorListFragment : Fragment() {
 
         // Adapter
         val adapter = ColorAdapter(view.context, colorList)
+        fun toggleSelection(position: Int) {
+            adapter.toggleSelection(position)
+        }
 
         view.color_list.adapter = adapter
         view.color_list.layoutManager = LinearLayoutManager(view.context)
-        view.color_list.addItemDecoration(DividerItemDecoration(view.context, LinearLayoutManager.HORIZONTAL))
-        view.color_list.addItemDecoration(DividerItemDecoration(view.context, LinearLayoutManager.VERTICAL))
-
+        view.color_list.addItemDecoration(
+            DividerItemDecoration(
+                view.context,
+                LinearLayoutManager.HORIZONTAL
+            )
+        )
+        view.color_list.addItemDecoration(
+            DividerItemDecoration(
+                view.context,
+                LinearLayoutManager.VERTICAL
+            )
+        )
 
         view.color_list.addOnItemClickListener(object : OnItemClickListener {
             override fun onItemClicked(position: Int, view: View) {
@@ -65,7 +78,7 @@ class ColorListFragment : Fragment() {
                 ).get(MainViewModel::class.java)
 
                 viewModel.position.value = position
-
+                toggleSelection(position)
 
                 if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                     activity!!.supportFragmentManager
@@ -82,7 +95,6 @@ class ColorListFragment : Fragment() {
                 }
             }
         })
-
         return view
     }
 }

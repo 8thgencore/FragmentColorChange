@@ -7,37 +7,31 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class ColorAdapter(context: Context, colorList: List<String>):
-    RecyclerView.Adapter<ColorAdapter.ColorViewHolder>(){
+class ColorAdapter(context: Context, colorList: List<String>) :
+    RecyclerView.Adapter<ColorAdapter.ColorViewHolder>() {
 
     private var items: List<String>? = colorList
     private var inflater: LayoutInflater = LayoutInflater.from(context)
+    private val selection = mutableSetOf<Int>()
+    // fun hasSelected() = selection.isNotEmpty()
+    private fun isSelected(position: Int) = selection.contains(position)
+    fun toggleSelection(position: Int)
+    {
+        // если элемент выделен то сделать не выделенным
+        // если элемент не выделен, то сделать выделенным
+        if(isSelected(position))
+            selection.remove(position)
+        else
+            selection.add(position)
 
-    ////////////////////////////////////////////////////////////////////////////////
-//    private val selection = mutableSetOf<Int>()
-//
-//    fun hasSelected() = selection.isNotEmpty()
-//
-//    fun isSelected(position: Int) = selection.contains(position)
-//
-//    fun toggleSelection(position: Int)
-//    {
-//        // если элемент выделен то сделать не выделенным
-//        // если элемент не выделен, то сделать выделенным
-//        if(isSelected(position))
-//            selection.remove(position)
-//        else
-//            selection.add(position)
-//        notifyDataSetChanged()
-//    }
-    //////////////////////////////////////////////////////////////////////////
+        selection.clear()
+        selection.add(position)
+        notifyDataSetChanged()
+    }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ColorViewHolder {
-        // создадим
-        var view = inflater.inflate(R.layout.item, parent, false)
-//        if(isSelected(position))
-//            view = inflater.inflate(R.layout.item_selected, parent, false)
-
+        val view = inflater.inflate(viewType, parent, false)
         return ColorViewHolder(view)
     }
 
@@ -46,9 +40,17 @@ class ColorAdapter(context: Context, colorList: List<String>):
         holder.tvColor.text = item
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return if (isSelected(position))
+            R.layout.item_selected
+        else
+            R.layout.item
+    }
+
     override fun getItemCount(): Int = items?.size ?: 0
 
     class ColorViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvColor : TextView = itemView.findViewById(R.id.tvColor)
+        val tvColor: TextView = itemView.findViewById(R.id.tvColor)
     }
+
 }
