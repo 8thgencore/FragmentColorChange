@@ -12,6 +12,7 @@ class ColorAdapter(context: Context, colorList: List<String>) :
 
     private var items: List<String>? = colorList
     private var inflater: LayoutInflater = LayoutInflater.from(context)
+
     private val selection = mutableSetOf<Int>()
     // fun hasSelected() = selection.isNotEmpty()
     private fun isSelected(position: Int) = selection.contains(position)
@@ -19,16 +20,14 @@ class ColorAdapter(context: Context, colorList: List<String>) :
     {
         // если элемент выделен то сделать не выделенным
         // если элемент не выделен, то сделать выделенным
-        if(isSelected(position))
-            selection.remove(position)
-        else
-            selection.add(position)
-
+//        if(isSelected(position))
+//            selection.remove(position)
+//        else
+//            selection.add(position)
         selection.clear()
         selection.add(position)
         notifyDataSetChanged()
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ColorViewHolder {
         val view = inflater.inflate(viewType, parent, false)
